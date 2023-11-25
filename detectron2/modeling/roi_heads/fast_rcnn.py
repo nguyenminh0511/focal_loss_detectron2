@@ -346,13 +346,16 @@ class FastRCNNOutputLayers(nn.Module):
             gamma = 2.0  # You can adjust the gamma value based on your needs
 
             # Calculate Focal Loss
-            logits = scores[:, :-1]
-            target = F.one_hot(gt_classes, num_classes=scores.size(1) - 1).float()
-            pt = torch.sigmoid(logits)
-            focal_weights = alpha * (1 - pt).pow(gamma)
-            focal_loss = F.binary_cross_entropy_with_logits(logits, target, weight=focal_weights, reduction="mean")
+            # logits = scores[:, :-1]
+            # target = F.one_hot(gt_classes, num_classes=scores.size(1) - 1).float()
+            # pt = torch.sigmoid(logits)
+            # focal_weights = alpha * (1 - pt).pow(gamma)
+            # focal_loss = F.binary_cross_entropy_with_logits(logits, target, weight=focal_weights, reduction="mean")
 
-            loss_cls = focal_loss
+            ce_loss  = cross_entropy(scores, gt_classes, reduction="none")
+            pt = torch.exp(-ce_loss)
+            focal_loss = alpha * (1 - pt) ** gamma * ce_loss
+            loss_cls = torch.mean(focal_loss)
 
         losses = {
             "loss_cls": loss_cls,
