@@ -343,7 +343,7 @@ class FastRCNNOutputLayers(nn.Module):
         else:
             # loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
             alpha = 0.15  # You can adjust the alpha value based on your needs
-            gamma = 1.5  # You can adjust the gamma value based on your needs
+            gamma = 2  # You can adjust the gamma value based on your needs
 
             # Calculate Focal Loss
             # logits = scores[:, :-1]
